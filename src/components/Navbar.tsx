@@ -12,8 +12,9 @@ export default function Navbar() {
     try {
       await logout();
       router.push("/login"); // redirige al login
-    } catch (err) {
-      console.error("Error al cerrar sesión:", err);
+    } catch (err: any) {
+      console.error("Error al cerrar sesión:", err.response?.data || err.message);
+      alert("No se pudo cerrar sesión, revisa la consola.");
     }
   };
 

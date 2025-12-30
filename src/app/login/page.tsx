@@ -25,20 +25,22 @@ export default function LoginPage() {
         <h2 className="text-2xl mb-4 text-black dark:text-white">Login</h2>
         {error && <p className="text-red-500">{error}</p>}
         <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="border p-2 w-full mb-2 rounded"
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+        autoComplete="username"
+        className="border p-2 w-full mb-2 rounded"
         />
         <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="border p-2 w-full mb-2 rounded"
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+        autoComplete="current-password"
+        className="border p-2 w-full mb-2 rounded"
         />
         <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
           Login
