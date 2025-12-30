@@ -1,26 +1,78 @@
 @import "tailwindcss";
 
+/* por defecto (light mode) */
 :root {
-  --background: #ffffff;
+  --background: #e1e2e7;
   --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Modo oscuro 'dark' */
+html.dark {
+  --background: #0a0a0a;
+  --foreground: #f3f1e9;
 }
 
+/* Variables globales para usar en @theme inline o componentes */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+/* Body con transición suave entre temas */
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+
+/* todos los textos dentro de body usen el color adecuado */
+body * {
+  color: var(--foreground);
+  transition: color 0.3s;
+}
+
+/* Filas de tabla light/dark */
+.table-header {
+  background-color: var(--background); /* light por defecto */
+  color: var(--foreground);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+
+/* Navbar background y texto usando variables CSS */
+.navbar {
+  background-color: var(--navbar-bg);
+  color: var(--navbar-text);
+  border-bottom: 1px solid var(--navbar-border);
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+/* Links dentro del navbar */
+.navbar a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.navbar a:hover {
+  text-decoration: underline;
+}
+
+/* Variables por defecto (light) */
+:root {
+  --navbar-bg: #ffffff;
+  --navbar-text: #000000;
+  --navbar-border: #e5e7eb;
+}
+
+/* Variables dark */
+html.dark {
+  --navbar-bg: #1f1f1f;
+  --navbar-text: #ffffff;
+  --navbar-border: #374151;
 }
