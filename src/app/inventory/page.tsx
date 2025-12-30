@@ -4,6 +4,7 @@ import PrivateRoute from "../../components/PrivateRoute";
 import { useEffect, useState } from "react";
 import api from "../../lib/api";
 import { getCurrentUser, User } from "../../lib/auth";
+import { useRouter } from "next/navigation";
 
 type InventoryItem = {
   id: string;
@@ -17,17 +18,24 @@ export default function InventoryPage() {
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const u = await getCurrentUser();
+
+        // ✅ FIX: validar null primero
+        if (!u) {
+          router.push("/login");
+          return;
+        }
+
         setUser(u);
 
         // Validar permiso de lectura
         if (u.role === "user" && !u.permissions?.inventory?.canRead) {
           alert("No tienes permiso para ver el inventario");
-          setLoading(false);
           return;
         }
 
@@ -41,7 +49,7 @@ export default function InventoryPage() {
     };
 
     fetchData();
-  }, []);
+  }, [router]);
 
   // Borrar item con validación de permiso
   const handleDelete = async (id: string) => {
@@ -60,7 +68,9 @@ export default function InventoryPage() {
     }
   };
 
-  if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  }
 
   return (
     <PrivateRoute allowedRoles={["admin", "user"]}>
@@ -79,11 +89,11 @@ export default function InventoryPage() {
 
         <table className="w-full border border-gray-300 dark:border-gray-700">
           <thead>
-            <tr className="table-header">
-                <th className="p-2 border">Nombre</th>
-                <th className="p-2 border">SKU</th>
-                <th className="p-2 border">Precio</th>
-                <th className="p-2 border">Stock</th>
+            <tr>
+              <th className="p-2 border">Nombre</th>
+              <th className="p-2 border">SKU</th>
+              <th className="p-2 border">Precio</th>
+              <th className="p-2 border">Stock</th>
               {(user?.permissions?.inventory?.canUpdate ||
                 user?.permissions?.inventory?.canDelete ||
                 user?.role === "admin") && <th className="p-2 border">Acciones</th>}
@@ -100,7 +110,6 @@ export default function InventoryPage() {
                   user?.permissions?.inventory?.canDelete ||
                   user?.role === "admin") && (
                   <td className="p-2 flex gap-2">
-                    {/* Botón Editar */}
                     {(user?.permissions?.inventory?.canUpdate || user?.role === "admin") && (
                       <a
                         href={`/inventory/${item.id}`}
@@ -109,7 +118,6 @@ export default function InventoryPage() {
                         Editar
                       </a>
                     )}
-                    {/* Botón Eliminar */}
                     {(user?.permissions?.inventory?.canDelete || user?.role === "admin") && (
                       <button
                         onClick={() => handleDelete(item.id)}
