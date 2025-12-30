@@ -18,15 +18,25 @@ export default function PrivateRoute({ children, allowedRoles }: PrivateRoutePro
     const checkUser = async () => {
       try {
         const u = await getCurrentUser();
-        console.log("Usuario obtenido en PrivateRoute:", u); // 🔍 Log del usuario
+        console.log("Usuario obtenido en PrivateRoute:", u);
+
+        // 🚫 No autenticado
+        if (!u) {
+          console.log("No hay sesión activa, redirigiendo a /login");
+          router.replace("/login");
+          return;
+        }
+
         setUser(u);
 
+        // 🚫 Rol no permitido
         if (allowedRoles && !allowedRoles.includes(u.role)) {
-          console.log("Rol no permitido, redirigiendo a /unauthorized"); // 🔍 Log rol
+          console.log("Rol no permitido, redirigiendo a /unauthorized");
           router.replace("/unauthorized");
+          return;
         }
       } catch (err) {
-        console.log("No hay sesión activa, redirigiendo a /login", err); // 🔍 Log error
+        console.log("Error al validar sesión, redirigiendo a /login", err);
         router.replace("/login");
       } finally {
         setLoading(false);
@@ -36,7 +46,9 @@ export default function PrivateRoute({ children, allowedRoles }: PrivateRoutePro
     checkUser();
   }, [router, allowedRoles]);
 
-  if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  }
 
   return user ? <>{children}</> : null;
 }
